@@ -1,0 +1,354 @@
+---
+title: "Case_study_group_10"
+author: "Till"
+date: "2022-07-27"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+setwd("C:/Users/Till/OneDrive - Technische Universität Berlin/Jarill Master/SoSe22/IDA/IDA_Case_study/Data/Einzelteil/")
+```
+
+## R Markdown
+Das ist die case-study-gruppe-10
+
+## Vorbereitung
+
+Installieren und laden der notwendigen Packages für unsere Case Study
+
+```{r echo=FALSE, warning=FALSE}
+if(!require(plotly)){
+  install.packages("plotly")
+}
+library(plotly)
+
+if(!require(tidyverse)){
+  install.packages("tidyverse")
+}
+library(tidyverse)
+
+if(!require(readr)){
+  install.packages("readr")
+}
+library(readr)
+
+if(!require(tidyr)){
+  install.packages("tidyr")
+}
+library(tidyr)
+
+if(!require(data.table)){
+  install.packages("data.table")
+}
+library(data.table)
+
+if(!require(vroom)){
+  install.packages("vroom")
+}
+library(vroom)
+
+if(!require(stringr)){
+  install.packages("stringr")
+}
+library(stringr)
+library(ggplot2)
+
+if(!require(shiny)){
+  install.packages("shiny")
+}
+library(shiny)
+```
+
+## Import of the data
+
+We have to import all (failed) parts, components and vehicles from 01-2013 - 12-2015. All the data is in the Datafolder. Maybe just the parts is enough. so start with the parts.
+
+```{r}
+
+wd <-getwd()
+
+```
+
+```{r}
+
+
+setwd("C:/Users/Till/OneDrive - Technische Universität Berlin/Jarill Master/SoSe22/IDA/IDA_Case_study/Data/Einzelteil/") #muss wie der Pfad für die Liste auf das vorliegende Verzeichnis der Dateien angepasst werden.
+list <- list.files() # Auflisten der Files, um den Import Pfadunabhaengiger zu gestalten
+```
+
+
+```{r}
+setwd("C:/Users/Till/OneDrive - Technische Universität Berlin/Jarill Master/SoSe22/IDA/IDA_Case_study/Data/Einzelteil/")
+T_01 <- read_file(list[1]) %>%
+  str_replace_all(. ," \\| \\| ", ";") %>%
+  str_replace_all(. , " ", "\n")%>%
+  fread(text = .,drop = c(1))
+
+T_02 <- read_file(list[2]) %>%
+  str_replace_all(. ,"\"  \"", ";") %>%
+  str_replace_all(. , "\t", "\n") %>%
+  fread(text = ., drop = c(1))
+
+T_03 <- read_file(list[3]) %>%
+  str_replace_all(. ,"\"  \"", ";") %>%
+  str_replace_all(. , "\v", "\n") %>%
+  fread(text = ., drop = c(1))
+
+T_07 <- read_file("Einzelteil_T07.txt")
+T_07 <- str_replace_all(T_07, "\"\"", "\"\n\"")
+T_07 <- str_replace_all(T_07, "\t", ";")
+T_07 <- fread(T_07, drop = c(1))
+
+T_09 <- read_file("Einzelteil_T09.txt")
+T_09 <- str_replace_all(T_09, fixed("\\"), ";")
+T_09 <- str_replace_all(T_09, "\v", "\n")
+T_09 <- fread(T_09, drop = c(1))
+
+T_11 <- read_file(list[11]) %>%
+  str_replace_all(. ,"\t", ";") %>%
+  str_replace_all(. ,"\f", "\n") %>%
+  fread(text = ., drop = c(1))
+
+T_16 <- read_file("Einzelteil_T16.txt")
+#file <- readChar("Einzelteil_T16.txt",nchar= 5000)
+#file <- str_replace_all(file ,"|  |", ";")
+T_16 <- str_replace_all(T_16 ,"\t", "\n")
+#print(file)
+T_16 <- fread(T_16,drop=c(2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,45))
+
+T_20 <- read_file("Einzelteil_T20.txt")
+T_20 <- str_replace_all(T_20 ,"\" \"", "\"\n\"")
+T_20 <- fread(T_20,drop=c(2,4,6,8,10,12,14,16,18,19))
+
+###22 schwierig
+
+
+
+
+
+
+T_24 <- read_file("Einzelteil_T24.txt")
+T_24 <- str_replace_all(T_24 ,"\f", "\n")
+T_24 <- fread(T_24, drop =c(1))
+
+T_27 <- read_file("Einzelteil_T27.txt")
+T_27 <- str_replace_all(T_27, "\"\a\"", "\"\n\"")
+T_27 <- fread(T_27, drop = c(2,4,6,8,10,12,14,16,18,19))
+
+T_31 <- read_file("Einzelteil_T31.txt")
+T_31<- str_replace_all(T_31, "\b", "\n")
+T_31 <- fread(T_31, drop = c(1))
+
+T_34 <- read_file("Einzelteil_T34.txt")
+T_34<- str_replace_all(T_34, "\"\"", "\"\n\"")
+T_34 <- fread(T_34, drop = c(2,4,6,8,10,12,14,16,18,19))
+
+
+
+
+T_36 <- read_file("Einzelteil_T36.txt")
+#file <- readChar("Einzelteil_T36.txt",nchar= 5000)
+T_36 <- str_replace_all(T_36 ,"  ", ";")
+T_36 <- str_replace_all(T_36 ," ", "\n")
+T_36 <- fread(T_36, drop =c(1))
+
+T_39 <- readChar("Einzelteil_T39.txt",nchar= 5000)
+T_39 <- str_replace_all(T_39 ,fixed("\\"), ";")
+T_39 <- str_replace_all(T_39 ,"\a", "\n")
+T_39 <- fread(T_39, drop =c(1))
+
+```
+#####TEster#####
+```{r}
+T_24 <- read_file("Einzelteil_T24.txt")
+T_24 <- str_replace_all(T_24 ,"\f", "\n")
+T_24 <- fread(T_24, drop =c(1))
+
+```
+
+
+
+```{r}
+setwd("C:/Users/Till/OneDrive - Technische Universität Berlin/Jarill Master/SoSe22/IDA/IDA_Case_study/Data/Einzelteil/")
+#T_01 <- txt
+#T_02 <- txt
+#T_03 <- txt
+T_04 <- fread(list[4])
+T_05 <- fread(list[5])
+T_06 <- fread(list[6])
+#T_07 <- txt
+T_08 <- fread(list[8])
+#T_09 <- txt
+T_10 <- fread(list[10])
+#T_11 <- txt
+T_12 <- fread(list[12])
+T_13 <- fread(list[13])
+T_14 <- fread(list[14])
+T_15 <- fread(list[15])
+#T_16 <- txt
+T_17 <- fread(list[17])
+T_18 <- fread(list[18])
+T_19 <- fread(list[19])
+#T_20 <- txt
+T_21 <- fread(list[21])
+#T_22 <- txt #####FEHLT#####
+T_23 <- fread(list[23])
+#T_24 <- txt 
+T_25 <- fread(list[25])
+T_26 <- fread(list[26])
+#T_27 <- txt 
+#SPRUNG
+#SPRUNG
+T_30 <- fread(list[28])
+#T_31 <- txt
+T_32 <- fread(list[30])
+T_33 <- fread(list[31])
+#T_34 <- txt 
+#T_35 <- txt #####FEHLT#####
+#T_36 <- txt 
+T_37 <- fread(list[35])
+T_38 <- fread(list[36])
+#T_39 <- txt
+T_40 <- fread(list[38])
+
+```
+
+
+
+
+```{r message=FALSE, warning=FALSE}
+list <- list.files("Data/Einzelteil/") # Auflisten der Files, um den Import Pfadunabhaengiger zu gestalten
+
+#setwd("Data/Einzelteil/") #muss wie der Pfad für die Liste auf das vorliegende Verzeichnis der Dateien angepasst werden.
+
+T_01 <- read_file(list[1]) %>%
+ T_01 <- str_replace_all( T_01," \\| \\| ", ";") %>%
+  T_01<- str_replace_all(T_01 , " ", "\n")
+  fread(text = T_01, drop = c(1,2))
+
+T_02 <- read_file(list[2]) %>%
+  str_replace_all(. ,"  ", ";") %>%
+  str_replace_all(. , "\t", "\n")%>%
+  fread(text = ., drop = c(1,2))
+
+T_03 <- read_file(list[3]) %>%
+  str_replace_all(. ,"\\|", ";") %>%
+  str_replace_all(. , "\v", "\n")%>%
+  fread(text = ., drop = c(1,2,8))
+
+T_04 <- fread(list[4], drop = c(1,2,8))
+
+
+T_05 <- fread(list[5], drop = c(1,2))
+
+
+T_06 <- fread(list[6], drop = c(1,2,8))
+
+T_07 <- read_file(list[7]) %>%
+  str_replace_all(. ," \\| \\| ", ";") %>%
+  str_replace_all(. , " ", "\n")%>%
+  fread(text = ., drop = c(1,2))
+
+T_08 <- fread(list[8], drop = c(1,2,8))
+
+T_09 <- read_file(list[9]) %>%
+  str_replace_all(. ," \\| \\| ", ";") %>%
+  str_replace_all(. , " ", "\n")%>%
+  fread(text = ., drop = c(1,2))
+
+T_10 <- fread(list[10], drop = c(1,2))
+
+T_11 <- read_file(list[11]) %>%
+  str_replace_all(. ,"\t", ";") %>%
+  str_replace_all(. , "\f", "\n")%>%
+  fread(text = ., drop = c(1,2,8))
+
+T_12 <- fread(list[12], drop = c(1,2))
+
+
+T_13 <- read_csv2(list[13])%>%
+  select(-1,-2,-8)
+
+T_14 <- read_csv2(list[14])%>%
+  select(-1,-2,-8)
+
+
+T_15 <- fread(list[15], drop = c(1,2))
+
+T_16 <- read_file(list[16]) %>%
+  str_replace_all(. ," \\| \\| ", ";") %>%
+  str_replace_all(. , " ", "\n")%>%
+  fread(text = ., drop = c(1,2))
+
+T_17<- fread(list[17], drop = c(1,2))
+
+
+T_18 <- read_csv2(list[18])%>%
+  select(-1,-2,-8)
+
+T_19 <- read_csv2(list[19])%>%
+  select(-1,-2,-8)
+
+
+T_21 <- read_csv2(list[21])%>%
+  select(-1,-2,-8)
+
+T_22 <- read_file(list[22]) %>%
+  str_replace_all(. , "\\S(\"\\d+\")", "\"\n") %>%
+  str_replace_all(. ,"\t", ";") %>%
+  fread(text = ., drop = c(1,2))
+
+
+T_23 <- fread(list[23])%>%
+  select(-1,-2)
+
+
+T_24 <- read_file(list[24])%>%
+  str_replace_all(. ,"  ", ";") %>%
+  str_replace_all(. , "\f", "\n")%>%
+  fread(text = ., drop = c(1,2))
+  
+
+T_25 <- read_csv(list[25]) %>%
+  select(-1,-2,-8)
+
+T_26 <- read_csv2(list[26])%>%
+  select(-1,-2,-8)
+
+T_27 <- read_file(list[27])%>%
+  str_replace_all(. ,"  ", ";") %>%
+  str_replace_all(. , "\f", "\n")%>%
+  fread(text = ., drop = c(1,2))
+
+T_30 <- read_csv2(list[28])%>%
+  select(-1,-2,-8)
+
+T_31 <- fread(list[29], drop = c(1,2))
+
+T_32 <- read_csv2(list[30])%>%
+  select(-1,-2,-8)
+
+T_33 <- read_csv2(list[31])%>%
+  select(-1,-2,-8)
+
+T_34 <- fread(list[32], drop = c(1,2))
+
+T_35 <- fread(list[33], drop = c(1,2))
+
+T_36 <- fread(list[34], drop = c(1,2))
+
+T_37 <- read_csv2(list[35])%>%
+  select(-1,-2,-8)
+
+T_38 <- read_csv2(list[36])%>%
+  select(-1,-2,-8)
+
+T_39 <- fread(list[37], drop = c(1,2))
+
+T_40 <- read_csv2(list[38])%>%
+  select(-1,-2,-8)
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
